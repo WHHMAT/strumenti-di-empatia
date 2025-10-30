@@ -47,21 +47,26 @@ const PerspectiveSimulator: React.FC<PerspectiveSimulatorProps> = ({ onGoHome })
   return (
     <div className="min-h-screen bg-slate-900 text-gray-200 font-sans flex flex-col items-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-5xl mx-auto">
-        <header className="text-center mb-8 relative">
-           <button 
-            onClick={onGoHome} 
-            className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-2 group"
-            aria-label="Torna alla selezione degli strumenti"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span className="hidden sm:inline">Strumenti</span>
-          </button>
-          <h1 className="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
-            Simulatore di Prospettive
-          </h1>
-          <p className="mt-2 text-lg text-slate-400">L'Allenatore di Empatia</p>
+        <header className="grid grid-cols-[1fr,auto,1fr] items-center gap-4 mb-8">
+          <div className="justify-self-start">
+            <button 
+              onClick={onGoHome} 
+              className="text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-2 group"
+              aria-label="Torna alla selezione degli strumenti"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span className="hidden sm:inline">Strumenti</span>
+            </button>
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+              Simulatore di Prospettive
+            </h1>
+            <p className="mt-2 text-lg text-slate-400">L'Allenatore di Empatia</p>
+          </div>
+          <div></div>
         </header>
 
         <main className="w-full">
