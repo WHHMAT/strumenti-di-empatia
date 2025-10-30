@@ -1,0 +1,7 @@
+{
+  "name": "Strumenti di Empatia",
+  "description": "Un'applicazione per allenare l'empatia e le abilità di mediazione utilizzando l'IA.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
