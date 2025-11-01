@@ -7,10 +7,9 @@ Il tuo obiettivo non è decidere chi ha ragione, ma aiutare A e B a scoprire i s
 Per esempio, se un genitore (B) dice "devi studiare", non limitarti a ripeterlo. Chiediti: "Quale bisogno o paura sta esprimendo il genitore? Forse ha paura per il futuro del figlio? Sente la responsabilità di garantirgli delle opportunità?".
 
 Usa un linguaggio semplice, diretto e positivo, come se stessi parlando con dei ragazzi di 12-13 anni.
-Analizza i due punti di vista e rispondi in italiano con esattamente 3 sezioni. Usa questi titoli precisi in grassetto, seguiti da un a capo:
+Analizza i due punti di vista e rispondi in italiano con esattamente 2 sezioni. Usa questi titoli precisi in grassetto, seguiti da un a capo:
 1. **Il mondo visto da A**
-2. **Il mondo visto da B**
-3. **Una frase magica per parlarsi**`;
+2. **Il mondo visto da B**`;
 
 export const getBridgeAnalysis = async (perspectiveA: string, perspectiveB: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -35,6 +34,65 @@ Punto di Vista B: "${perspectiveB}"`;
   } catch (error) {
     console.error("Error calling Gemini API for Perspective Analysis:", error);
     throw new Error("Failed to get analysis from Gemini API.");
+  }
+};
+
+
+// === ISTRUZIONI PER LA VALUTAZIONE DELLA FRASE RIFORMULATA ===
+export interface EvaluationResult {
+    evaluation: string;
+    suggestion: string;
+}
+
+const SYSTEM_INSTRUCTION_EVALUATION = `Sei un "coach di empatia" incoraggiante e saggio. Hai appena aiutato l'utente A a capire meglio il punto di vista dell'utente B. Ora l'utente A ha riscritto la sua frase per essere più empatico.
+Il tuo compito è valutare questa nuova frase.
+
+Rispondi *SEMPRE E SOLO* con un oggetto JSON. Non aggiungere MAI testo prima o dopo il JSON.
+Il JSON deve avere questa struttura:
+{
+  "evaluation": "Una valutazione breve, positiva e costruttiva della frase di A. Inizia con un incoraggiamento. Spiega perché è un buon tentativo e dove potrebbe migliorare. Usa un linguaggio semplice e diretto per ragazzi di 12-13 anni.",
+  "suggestion": "Una versione migliorata della frase di A, che sia ancora più empatica e aperta al dialogo. Se la frase originale è già ottima, fai comunque un piccolo suggerimento per renderla perfetta o scrivi 'La tua frase è già fantastica, non cambierei una virgola!'."
+}`;
+
+export const evaluateReframedStatement = async (
+  perspectiveA: string,
+  perspectiveB: string,
+  reframedStatement: string
+): Promise<EvaluationResult> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+  const userPrompt = `Ecco il contesto:
+- Il mio punto di vista originale (A) era: "${perspectiveA}"
+- Il punto di vista dell'altra persona (B) è: "${perspectiveB}"
+- Questa è la mia nuova frase per parlare a B: "${reframedStatement}"
+
+Per favore, valutala.`;
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: userPrompt,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION_EVALUATION,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            "evaluation": { "type": Type.STRING },
+            "suggestion": { "type": Type.STRING }
+          },
+          required: ["evaluation", "suggestion"]
+        },
+        temperature: 0.5,
+      }
+    });
+
+    const jsonText = response.text;
+    return JSON.parse(jsonText) as EvaluationResult;
+
+  } catch (error) {
+    console.error("Error calling Gemini API for Statement Evaluation:", error);
+    throw new Error("Failed to get statement evaluation from Gemini API.");
   }
 };
 

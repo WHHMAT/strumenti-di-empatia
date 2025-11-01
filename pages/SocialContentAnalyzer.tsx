@@ -111,12 +111,15 @@ const SocialContentAnalyzer: React.FC<SocialContentAnalyzerProps> = ({ onGoHome 
                   <div key={key}>
                     <div className="flex justify-between items-center mb-1 text-slate-300">
                       <span>{key}</span>
-                      <span className="font-semibold text-slate-100">{(value * 100).toFixed(2)}%</span>
+                      {/* Fix: The value from Object.entries is 'unknown', so it must be cast to 'number' for arithmetic operations. */}
+                      <span className="font-semibold text-slate-100">{((value as number) * 100).toFixed(2)}%</span>
                     </div>
                     <div className="w-full bg-slate-700 rounded-full h-2.5">
                       <div
-                        className={`${getBarColor(value)} h-2.5 rounded-full transition-all duration-500`}
-                        style={{ width: `${value * 100}%` }}
+                        // Fix: The value from Object.entries is 'unknown', so it must be cast to 'number' before passing to getBarColor.
+                        className={`${getBarColor(value as number)} h-2.5 rounded-full transition-all duration-500`}
+                        // Fix: The value from Object.entries is 'unknown', so it must be cast to 'number' for arithmetic operations.
+                        style={{ width: `${(value as number) * 100}%` }}
                       ></div>
                     </div>
                   </div>
